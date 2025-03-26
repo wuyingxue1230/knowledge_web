@@ -5,12 +5,12 @@ load_dotenv()
 
 class Config:
     # 飞书应用配置
-    FEISHU_APP_ID = os.getenv("FEISHU_APP_ID", "cli_a769c6cbe13b101c")
-    FEISHU_APP_SECRET = os.getenv("FEISHU_APP_SECRET", "RMv5qs1evWRblW1bekmn9fUdj2XFZZaq")
+    FEISHU_APP_ID = os.getenv("FEISHU_APP_ID", "xxxx")
+    FEISHU_APP_SECRET = os.getenv("FEISHU_APP_SECRET", "xxxx")
     
     # 多维表格配置
-    BASE_ID = os.getenv("BASE_ID", "R7VObQxrxaHtLzs6QzGcIFyznZg")
-    TABLE_ID = os.getenv("TABLE_ID", "tbltlDw7PngrCo4x")
+    BASE_ID = os.getenv("BASE_ID", "xxxx")
+    TABLE_ID = os.getenv("TABLE_ID", "xxxx")
 
     # Flask配置
     SECRET_KEY = os.urandom(24)
