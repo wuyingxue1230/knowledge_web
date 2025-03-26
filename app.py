@@ -2,6 +2,8 @@ from flask import Flask, render_template, jsonify
 import requests
 from config import Config
 import time
+import markdown
+import json
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -54,9 +56,32 @@ class FeishuAPI:
 
 def process_field(field):
     """处理字段值，确保返回字符串"""
+    if field is None:
+        return ""
+        
+    # 如果是列表，将所有项连接成字符串
     if isinstance(field, list):
         return "\n".join(str(item) for item in field)
-    return str(field) if field is not None else ""
+        
+    # 如果是字典，直接查找 text 字段
+    if isinstance(field, dict):
+        return str(field.get("text", ""))
+        
+    # 如果是字符串，尝试解析 JSON
+    if isinstance(field, str):
+        try:
+            # 尝试解析 JSON 字符串
+            field_dict = json.loads(field)
+            if isinstance(field_dict, dict):
+                return str(field_dict.get("text", field))
+        except json.JSONDecodeError:
+            return field
+            
+    return str(field)
+
+def render_markdown(text):
+    """将Markdown文本转换为HTML"""
+    return markdown.markdown(text, extensions=['extra'])
 
 feishu_api = FeishuAPI(Config.FEISHU_APP_ID, Config.FEISHU_APP_SECRET)
 
@@ -67,12 +92,13 @@ def index():
         articles = []
         for record in records:
             fields = record.get("fields", {})
+            content = process_field(fields.get("概要内容输出"))
             article = {
                 "id": record.get("record_id"),
                 "title": process_field(fields.get("标题")),
                 "quote": process_field(fields.get("金句输出")),
                 "comment": process_field(fields.get("西瓜点评")),
-                "content": process_field(fields.get("概要内容输出"))[:100] + "..." if fields.get("概要内容输出") else ""
+                "content": content[:100] + "..." if len(content) > 100 else content
             }
             articles.append(article)
         return render_template('index.html', articles=articles)
@@ -87,12 +113,13 @@ def article_detail(record_id):
         for record in records:
             if record.get("record_id") == record_id:
                 fields = record.get("fields", {})
+                content = process_field(fields.get("概要内容输出"))
                 article = {
                     "id": record_id,
                     "title": process_field(fields.get("标题")),
                     "quote": process_field(fields.get("金句输出")),
                     "comment": process_field(fields.get("西瓜点评")),
-                    "content": process_field(fields.get("概要内容输出"))
+                    "content": render_markdown(content)
                 }
                 break
         if article:
