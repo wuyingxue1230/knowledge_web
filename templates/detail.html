@@ -5,6 +5,16 @@
 {% block content %}
 <article class="article-card">
     <h2>{{ article.title }}</h2>
+    <div class="article-meta">
+        预计阅读时间：{{ article.reading_time }} 分钟
+    </div>
+    {% if article.tags %}
+    <div class="tags">
+        {% for tag in article.tags %}
+        <span class="tag">#{{ tag }}</span>
+        {% endfor %}
+    </div>
+    {% endif %}
     {% if article.quote %}
     <div class="quote">{{ article.quote }}</div>
     {% endif %}

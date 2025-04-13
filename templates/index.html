@@ -6,16 +6,26 @@
 {% if articles %}
     {% for article in articles %}
     <article class="article-card">
-        <h2><a href="/article/{{ article.id }}" target="_blank" class="article-title">{{ article.title }}</a></h2>
+        <h2><a href="/article/{{ article.id }}" class="article-title">{{ article.title }}</a></h2>
+        <div class="article-meta">
+            预计阅读时间：{{ article.reading_time }} 分钟
+        </div>
+        {% if article.tags %}
+        <div class="tags">
+            {% for tag in article.tags %}
+            <span class="tag">#{{ tag }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
         {% if article.quote %}
-        <div class="quote"><strong>{{ article.quote }}</strong></div>
+        <div class="quote">{{ article.quote }}</div>
         {% endif %}
         {% if article.comment %}
         <div class="comment">{{ article.comment }}</div>
         {% endif %}
         <div class="content">{{ article.content }}</div>
         <div class="read-more">
-            <a href="/article/{{ article.id }}" target="_blank" class="read-more-link">阅读全文 →</a>
+            <a href="/article/{{ article.id }}" class="read-more-link">阅读全文 →</a>
         </div>
     </article>
     {% endfor %}
